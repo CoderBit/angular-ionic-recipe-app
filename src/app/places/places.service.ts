@@ -21,7 +21,7 @@ export class PlacesService {
     ),
     new Place(
       'p2',
-      'L\'Amour Toujours',
+      "L'Amour Toujours",
       'A romantic place in Paris!',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Paris_Night.jpg/1024px-Paris_Night.jpg',
       189.99,
@@ -38,20 +38,21 @@ export class PlacesService {
       new Date('2019-01-01'),
       new Date('2019-12-31'),
       'abc'
-    )
+    ),
   ]);
-  constructor(
-    private authService: AuthService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   get places() {
     return this._places.asObservable();
   }
 
   getPLace(id: string) {
-    return this.places.pipe(take(1), map(places => {
-      return {...places.find((p) => p.id === id) };
-    }));
+    return this.places.pipe(
+      take(1),
+      map((places) => {
+        return { ...places.find((p) => p.id === id) };
+      })
+    );
   }
 
   addPlace(
@@ -71,8 +72,35 @@ export class PlacesService {
       dateTo,
       this.authService.userId
     );
-    return this.places.pipe(take(1), delay(1000), tap((places) => {
+    return this.places.pipe(
+      take(1),
+      delay(1000),
+      tap((places) => {
         this._places.next(places.concat(newPlace));
-    }));
+      })
+    );
+  }
+
+  updatePlace(placeId: string, title: string, description: string) {
+    return this.places.pipe(
+      take(1),
+      delay(1000),
+      tap((places) => {
+        const updatedPlaceIndex = places.findIndex((el) => el.id === placeId);
+        const updatedPlaces = [...places];
+        const oldPlace = updatedPlaces[updatedPlaceIndex];
+        updatedPlaces[updatedPlaceIndex] = new Place(
+          oldPlace.id,
+          title,
+          description,
+          oldPlace.imageUrl,
+          oldPlace.price,
+          oldPlace.availableFrom,
+          oldPlace.availableTo,
+          oldPlace.userId
+        );
+        this._places.next(updatedPlaces);
+      })
+    );
   }
 }
