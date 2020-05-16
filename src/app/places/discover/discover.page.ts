@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class DiscoverPage implements OnInit, OnDestroy {
   loadedPlaces: Place[] = [];
   relevantPlaces: Place[] = [];
+  private filter = 'all';
   private placesSub: Subscription;
   constructor(
     private placesService: PlacesService,
@@ -21,19 +22,15 @@ export class DiscoverPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.placesSub = this.placesService.places.subscribe((places) => {
       this.loadedPlaces = places;
-      this.relevantPlaces = places;
-      console.log(this.loadedPlaces);
+      this.onFilterUpdate(this.filter);
     });
   }
 
-  onFilterUpdate(event: CustomEvent) {
-    if (event.detail.value === 'all') {
-      this.relevantPlaces = this.loadedPlaces;
-    } else {
-      this.relevantPlaces = this.loadedPlaces.filter(
-        (place) => place.userId !== this.authService.userId
-      );
-    }
+  onFilterUpdate(filter: string) {
+    const isShown = (place) =>
+      filter === 'all' || place.userId !== this.authService.userId;
+    this.relevantPlaces = this.loadedPlaces.filter(isShown);
+    this.filter = filter;
   }
 
   ngOnDestroy() {
