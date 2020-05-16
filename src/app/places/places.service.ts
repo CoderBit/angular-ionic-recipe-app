@@ -1,46 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Place } from './place.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlacesService {
   private placesArray: Place[] = [
     new Place(
       'p1',
-      'Mount Bromo',
-      'Indonesia',
-      'https://images.unsplash.com/photo-1570174032521-a18ac4975c72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
-      189.99,
+      'Manhattan Mansion',
+      'In the heart of New York City.',
+      'https://lonelyplanetimages.imgix.net/mastheads/GettyImages-538096543_medium.jpg?sharp=10&vib=20&w=1200',
+      149.99,
       new Date('2019-01-01'),
-      new Date('2019-12-31')
+      new Date('2019-12-31'),
+      'abc'
     ),
     new Place(
       'p2',
-      'Red Square',
-      'Russia',
-      'https://images.unsplash.com/photo-1536609143569-6d0fb61c6f8f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80',
-      149.99,
+      'L\'Amour Toujours',
+      'A romantic place in Paris!',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Paris_Night.jpg/1024px-Paris_Night.jpg',
+      189.99,
       new Date('2019-01-01'),
-      new Date('2019-12-31')
+      new Date('2019-12-31'),
+      'abc'
     ),
     new Place(
       'p3',
-      'Metropolitan City of Venice',
-      'Italy',
-      'https://images.unsplash.com/photo-1538597321763-e2dabb6c9505?ixlib=rb-1.2.1&auto=format&fit=crop&w=1057&q=80',
-      149.99,
+      'The Foggy Palace',
+      'Not your average city trip!',
+      'https://upload.wikimedia.org/wikipedia/commons/0/01/San_Francisco_with_two_bridges_and_the_fog.jpg',
+      99.99,
       new Date('2019-01-01'),
-      new Date('2019-12-31')
+      new Date('2019-12-31'),
+      'abc'
     )
   ];
-  constructor() {}
+  constructor(
+    private authService: AuthService
+  ) {}
 
   get places() {
     return [...this.placesArray];
   }
 
   getPLace(id: string) {
-    return {...this.places.find(p => p.id === id)};
+    return { ...this.places.find((p) => p.id === id) };
+  }
+
+  addPlace(
+    title: string,
+    description: string,
+    price: number,
+    dateFrom: Date,
+    dateTo: Date
+  ) {
+    const newPlace = new Place(
+      Math.random().toString(),
+      title,
+      description,
+      'https://images.unsplash.com/photo-1538597321763-e2dabb6c9505?ixlib=rb-1.2.1&auto=format&fit=crop&w=1057&q=80',
+      price,
+      dateFrom,
+      dateTo,
+      this.authService.userId
+    );
+    this.placesArray.push(newPlace);
   }
 }
