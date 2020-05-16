@@ -17,11 +17,11 @@ export class PlacesService {
       149.99,
       new Date('2019-01-01'),
       new Date('2019-12-31'),
-      'abc'
+      'xyz'
     ),
     new Place(
       'p2',
-      "L'Amour Toujours",
+      'L\'Amour Toujours',
       'A romantic place in Paris!',
       'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Paris_Night.jpg/1024px-Paris_Night.jpg',
       189.99,
