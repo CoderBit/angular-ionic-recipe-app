@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private _userIsAuthenticated = true;
-  private _userId = 'abc';
+  private _userIsAuthenticated = false;
+  private _userId = null;
 
   get userIsAuthenticated() {
     return this._userIsAuthenticated;
@@ -15,10 +16,13 @@ export class AuthService {
     return this._userId;
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) {}
 
-  login() {
-    this._userIsAuthenticated = true;
+  login(username: string, password: string) {
+    return this.http.post(`https://ub-projectx.herokuapp.com/api/users/login`, {
+      username,
+      password,
+    });
   }
 
   logout() {

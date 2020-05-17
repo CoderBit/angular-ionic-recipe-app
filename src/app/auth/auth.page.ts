@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -15,22 +15,30 @@ export class AuthPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {}
 
-  onLogin() {
+  onLogin(email, password) {
     this.isLoading = true;
-    this.authService.login();
     this.loadingCtrl.create({keyboardClose: true, message: 'Logging In...'})
     .then(loadingEl => {
       loadingEl.present();
-      setTimeout(() => {
-        this.isLoading = false;
-        loadingEl.dismiss();
-        this.router.navigateByUrl('/places/tabs/discover');
-      }, 1500);
+      this.authService.login(email, password).subscribe(
+        resData => {
+          console.log(resData);
+          this.isLoading = false;
+          loadingEl.dismiss();
+          this.router.navigateByUrl('/places/tabs/discover');
+        },
+        errData => {
+          loadingEl.dismiss();
+          console.log(errData);
+          this.showAlert('Username or password incorrect.');
+        }
+      );
     });
   }
 
@@ -47,9 +55,19 @@ export class AuthPage implements OnInit {
 
     if (this.isLogin) {
       // send a req to login server
+      this.onLogin(email, password);
     } else {
       // send a req to signup server
     }
+  }
+
+  showAlert(message: string) {
+    this.alertCtrl.create({
+      header: 'Authentication Failed!',
+      message,
+      buttons: ['Ok']
+    })
+    .then(el => el.present());
   }
 
 }
